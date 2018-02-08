@@ -3,7 +3,7 @@
     "displayName": "javascript console utils",
     "description": "Help insert and remove console.(*) statements",
     "version": "0.7.0",
-    "publisher": "neeraj",
+    "publisher": "neeraj-singh",
     "repository": "https://github.com/neeraj-singh47/vscode-js-console-utils",
     "engines": {
         "vscode": "^1.5.0"
