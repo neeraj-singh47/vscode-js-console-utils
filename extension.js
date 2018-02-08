@@ -17,10 +17,19 @@ const insertText = (val) => {
     });
 }
 
-function getAllLogStatements(document, documentText) {
+function getAllLogStatements(document, documentText, type = 'all') {
     let logStatements = [];
 
-    const logRegex = /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
+    let logRegex = /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
+    switch(type) {
+        case 'error':   logRegex = /console.error\((.*)\);?/g;
+                        break;
+        case 'warn' :   logRegex = /console.warn\((.*)\);?/g;
+                        break;
+        case 'log'  :   logRegex = /console.log\((.*)\);?/g;
+                        break;
+        default:        break;
+    }
     let match;
     while (match = logRegex.exec(documentText)) {
         let matchRange =
@@ -34,15 +43,15 @@ function getAllLogStatements(document, documentText) {
     return logStatements;
 }
 
-function deleteFoundLogStatements(workspaceEdit, docUri, logs) {
+function deleteFoundLogStatements(workspaceEdit, docUri, logs, type = 'log') {
     logs.forEach((log) => {
         workspaceEdit.delete(docUri, log);
     });
 
     vscode.workspace.applyEdit(workspaceEdit).then(() => {
         logs.length > 1
-            ? vscode.window.showInformationMessage(`${logs.length} console.logs deleted`)
-            : vscode.window.showInformationMessage(`${logs.length} console.log deleted`);
+            ? vscode.window.showInformationMessage(`${logs.length} console.${type}s deleted`)
+            : vscode.window.showInformationMessage(`${logs.length} console.${type} deleted`);
     });
 }
 
@@ -81,6 +90,51 @@ function activate(context) {
         deleteFoundLogStatements(workspaceEdit, document.uri, logStatements);
     });
     context.subscriptions.push(deleteAllLogStatements);
+
+    const deleteOnlyLogStatements = vscode.commands.registerCommand('extension.deleteOnlyLogStatements', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) { return; }
+
+        const document = editor.document;
+        const documentText = editor.document.getText();
+
+        let workspaceEdit = new vscode.WorkspaceEdit();
+
+        const logStatements = getAllLogStatements(document, documentText, 'log');
+
+        deleteFoundLogStatements(workspaceEdit, document.uri, logStatements);
+    });
+    context.subscriptions.push(deleteOnlyLogStatements);
+
+    const deleteOnlyErrorStatements = vscode.commands.registerCommand('extension.deleteOnlyErrorStatements', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) { return; }
+
+        const document = editor.document;
+        const documentText = editor.document.getText();
+
+        let workspaceEdit = new vscode.WorkspaceEdit();
+
+        const logStatements = getAllLogStatements(document, documentText, 'error');
+
+        deleteFoundLogStatements(workspaceEdit, document.uri, logStatements, 'Error');
+    });
+    context.subscriptions.push(deleteOnlyErrorStatements);
+
+    const deleteOnlyWarnStatements = vscode.commands.registerCommand('extension.deleteOnlyWarnStatements', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) { return; }
+
+        const document = editor.document;
+        const documentText = editor.document.getText();
+
+        let workspaceEdit = new vscode.WorkspaceEdit();
+
+        const logStatements = getAllLogStatements(document, documentText, 'warn');
+
+        deleteFoundLogStatements(workspaceEdit, document.uri, logStatements, 'Warn');
+    });
+    context.subscriptions.push(deleteOnlyWarnStatements);
 }
 exports.activate = activate;
 

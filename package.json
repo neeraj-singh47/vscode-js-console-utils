@@ -1,10 +1,10 @@
 {
-    "name": "vscode-js-console-utils",
+    "name": "vscode-js-console-utils-extended",
     "displayName": "javascript console utils",
     "description": "Help insert and remove console.(*) statements",
     "version": "0.7.0",
-    "publisher": "whtouche",
-    "repository": "https://github.com/whtouche/vscode-js-console-utils",
+    "publisher": "neeraj",
+    "repository": "https://github.com/neeraj-singh47/vscode-js-console-utils",
     "engines": {
         "vscode": "^1.5.0"
     },
@@ -13,7 +13,10 @@
     ],
     "activationEvents": [
         "onCommand:extension.insertLogStatement",
-        "onCommand:extension.deleteAllLogStatements"
+        "onCommand:extension.deleteAllLogStatements",
+        "onCommand:extension.deleteOnlyLogStatements",
+        "onCommand:extension.deleteOnlyErrorStatements",
+        "onCommand:extension.deleteOnlyWarnStatements"
     ],
     "main": "./extension",
     "contributes": {
@@ -24,7 +27,19 @@
             },
             {
                 "command": "extension.deleteAllLogStatements",
+                "title": "Delete all console statements"
+            },
+            {
+                "command": "extension.deleteOnlyLogStatements",
                 "title": "Delete all console.log statements"
+            },
+            {
+                "command": "extension.deleteOnlyErrorStatements",
+                "title": "Delete all console.error statements"
+            },
+            {
+                "command": "extension.deleteOnlyWarnStatements",
+                "title": "Delete all console.warn statements"
             }
         ],
         "keybindings": [
@@ -37,7 +52,22 @@
             {
                 "command": "extension.deleteAllLogStatements",
                 "key": "shift+ctrl+d",
-                "mac": "shift+cmd+d"
+                "mac": "shift+cmd+a"
+            },
+            {
+                "command": "extension.deleteOnlyLogStatements",
+                "key": "shift+ctrl+l",
+                "mac": "shift+cmd+l"
+            },
+            {
+                "command": "extension.deleteOnlyWarnStatements",
+                "key": "shift+ctrl+w",
+                "mac": "shift+cmd+w"
+            },
+            {
+                "command": "extension.deleteOnlyErrorStatements",
+                "key": "shift+ctrl+e",
+                "mac": "shift+cmd+e"
             }
         ]
     },
